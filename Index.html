@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divulgador Lite - Teste Gratuito</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Card Principal */
+        .generator-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 { color: #1f2937; text-align: center; margin-bottom: 1.5rem; }
+        
+        .form-group { margin-bottom: 1rem; }
+        
+        label { display: block; margin-bottom: 0.5rem; color: #4b5563; font-weight: 500; }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box; /* Garante que padding não estoure a largura */
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--secondary); }
+
+        /* Área de Resultado */
+        .result-area {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            display: none; /* Escondido por padrão */
+            word-break: break-all;
+        }
+
+        .result-area p { margin: 0 0 0.5rem 0; font-weight: bold; color: #1e3a8a; }
+        .result-link { color: var(--primary); text-decoration: none; }
+
+        /* Simulação de Vitrine */
+        .vitrine {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .product-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .icon { font-size: 2rem; margin-right: 1rem; }
+        
+        .copy-btn {
+            background-color: #10b981;
+            margin-top: 10px;
+        }
+        .copy-btn:hover { background-color: #059669; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="generator-card">
+            <h1>Divulgador Lite 🚀</h1>
+            
+            <div class="form-group">
+                <label>Escolha a Loja:</label>
+                <select id="store">
+                    <option value="generic">Genérica (Qualquer site)</option>
+                    <option value="amazon">Amazon</option>
+                    <option value="shopee">Shopee</option>
+                    <option value="magalu">Magazine Luiza</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Seu Código de Afiliado (Tag/ID):</label>
+                <input type="text" id="affiliateId" placeholder="Ex: sua-loja-20 ou id_123">
+            </div>
+
+            <div class="form-group">
+                <label>Link Original do Produto:</label>
+                <input type="url" id="productLink" placeholder="Cole o link aqui (https://...)">
+            </div>
+
+            <button onclick="generateLink()">⚡ Gerar Link Comissionado</button>
+
+            <div id="result" class="result-area">
+                <p>Link Gerado:</p>
+                <a id="finalLink" class="result-link" href="#" target="_blank"></a>
+                <button class="copy-btn" onclick="copyLink()">Copiar Link</button>
+            </div>
+        </div>
+
+        <h3>Sua Vitrine Recente</h3>
+        <div class="vitrine" id="history">
+            <div style="text-align: center; color: #9ca3af;">Nenhum link gerado ainda.</div>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const store = document.getElementById('store').value;
+            const affiliateId = document.getElementById('affiliateId').value;
+            let originalLink = document.getElementById('productLink').value;
+            const resultDiv = document.getElementById('result');
+            const finalLinkAnchor = document.getElementById('finalLink');
+
+            if (!affiliateId || !originalLink) {
+                alert("Por favor, preencha o código de afiliado e o link do produto.");
+                return;
+            }
+
+            // Lógica Simples de Construção de URL (Simulação)
+            // OBS: Em um app real, Shopee e Magalu exigem APIs complexas para encurtar.
+            // Aqui estamos usando o método de parâmetros de URL para fins didáticos.
+            
+            let newLink = "";
+
+            try {
+                const urlObj = new URL(originalLink);
+
+                if (store === 'amazon') {
+                    // Amazon usa ?tag=
+                    urlObj.searchParams.set('tag', affiliateId);
+                    newLink = urlObj.toString();
+                } else if (store === 'magalu') {
+                    // Exemplo simplificado Magalu (geralmente é magazineluiza.com.br/afiliado/ID)
+                    newLink = `https://www.magazinevoce.com.br/${affiliateId}/${urlObj.pathname}`;
+                } else if (store === 'shopee') {
+                    // Shopee usa parâmetros UTM ou deep link
+                    urlObj.searchParams.set('utm_source', affiliateId);
+                    newLink = urlObj.toString();
+                } else {
+                    // Genérico
+                    urlObj.searchParams.set('ref', affiliateId);
+                    newLink = urlObj.toString();
+                }
+
+                // Exibir Resultado
+                resultDiv.style.display = 'block';
+                finalLinkAnchor.href = newLink;
+                finalLinkAnchor.innerText = newLink;
+
+                // Adicionar ao Histórico
+                addToHistory(newLink, store);
+
+            } catch (e) {
+                alert("Link inválido. Certifique-se de incluir https://");
+            }
+        }
+
+        function copyLink() {
+            const linkText = document.getElementById('finalLink').innerText;
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert("Link copiado!");
+            });
+        }
+
+        function addToHistory(link, store) {
+            const historyDiv = document.getElementById('history');
+            
+            // Remove aviso de vazio se for o primeiro
+            if(historyDiv.children[0].innerText.includes("Nenhum link")) {
+                historyDiv.innerHTML = "";
+            }
+
+            const item = document.createElement('div');
+            item.className = 'product-card';
+            
+            // Ícone baseado na loja
+            let icon = "🔗";
+            if(store === 'amazon') icon = "🛒";
+            if(store === 'shopee') icon = "🛍️";
+            
+            item.innerHTML = `
+                <div class="icon">${icon}</div>
+                <div style="overflow: hidden;">
+                    <strong style="text-transform: capitalize;">${store}</strong><br>
+                    <small style="color: #6b7280; white-space: nowrap;">${link.substring(0, 40)}...</small>
+                </div>
+            `;
+            
+            // Adiciona no topo
+            historyDiv.insertBefore(item, historyDiv.firstChild);
+        }
+    </script>
+</body>
+</html>
